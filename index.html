@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0B2A4A">
+<title>Конструктор запусков — Traffared Nexts</title>
+<style>
+  * {
+    margin:0; padding:0; box-sizing:border-box;
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+    color-adjust:exact;
+  }
+
+  html {
+    scroll-behavior:smooth;
+    background:#0B2A4A;
+  }
+
+  body {
+    background:
+      linear-gradient(rgba(79,209,232,0.09) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(79,209,232,0.09) 1px, transparent 1px),
+      #0B2A4A;
+    background-size:34px 34px;
+    font-family:ui-monospace, 'SF Mono', 'Courier New', monospace;
+    color:#F3F7F9;
+    padding-bottom:110px; /* room for sticky CTA */
+  }
+
+  .wrap {
+    max-width:520px;
+    margin:0 auto;
+    padding:0 24px;
+  }
+
+  /* crop marks, same signature as the ad creatives */
+  .crop { position:fixed; width:26px; height:26px; z-index:2; pointer-events:none; }
+  .crop::before, .crop::after { content:""; position:absolute; background:rgba(232,238,242,0.35); }
+  .crop::before { width:26px; height:2px; }
+  .crop::after { width:2px; height:26px; }
+  .crop.tl { top:22px; left:22px; }
+  .crop.tr { top:22px; right:22px; }
+  .crop.tr::before, .crop.tr::after { right:0; }
+
+  /* header */
+  header { padding:74px 0 40px; }
+
+  .eyebrow {
+    font-size:13px;
+    letter-spacing:3px;
+    color:#5FE8FF;
+    text-transform:uppercase;
+    margin-bottom:22px;
+  }
+  .eyebrow b { color:#F3F7F9; }
+
+  h1 {
+    font-family:-apple-system, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+    font-weight:700;
+    font-size:34px;
+    line-height:1.28;
+    letter-spacing:-0.5px;
+    color:#F3F7F9;
+  }
+  h1 .hl { color:#5FE8FF; }
+
+  .intro {
+    margin-top:26px;
+    font-size:17px;
+    line-height:1.6;
+    color:#B9CCC0;
+    max-width:440px;
+    border-left:2px solid #5FE8FF;
+    padding-left:16px;
+  }
+
+  /* mini schematic — same visual language as the ad creative */
+  .diagram {
+    position:relative;
+    margin-top:44px;
+    height:96px;
+  }
+  .stage-box {
+    position:absolute;
+    top:0;
+    height:56px;
+    border:1.3px solid rgba(232,238,242,0.35);
+    background:rgba(11,42,74,0.6);
+    display:flex; align-items:center; justify-content:center;
+    font-family:-apple-system, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+    font-weight:600;
+    font-size:14px;
+    color:#F3F7F9;
+  }
+  .s1 { left:0; width:29%; }
+  .s2 { left:35.5%; width:29%; }
+  .s3 { left:71%; width:29%; border-color:#5FE8FF; color:#5FE8FF; }
+  .arrow { position:absolute; top:28px; height:1.3px; background:rgba(232,238,242,0.3); }
+  .a1 { left:29%; width:6.5%; }
+  .a2 { left:64%; width:7%; }
+  .fail {
+    position:absolute;
+    top:0; left:calc(35.5% + 29% - 1px);
+    width:2px; height:56px;
+    background:#FF5C42;
+  }
+  .fail::before {
+    content:""; position:absolute; top:-4px; left:-3.5px;
+    width:9px; height:9px; border-radius:50%; background:#FF5C42;
+  }
+  .diagram-cap {
+    margin-top:14px;
+    font-size:13px;
+    color:#FF8A75;
+    letter-spacing:0.3px;
+  }
+  .diagram-cap b { color:#FF5C42; letter-spacing:1.5px; }
+
+  /* stats */
+  .stats {
+    display:flex;
+    gap:0;
+    margin-top:52px;
+    border-top:1px solid rgba(232,238,242,0.15);
+    border-bottom:1px solid rgba(232,238,242,0.15);
+    padding:24px 0;
+  }
+  .stat { flex:1; }
+  .stat .num {
+    font-family:-apple-system, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+    font-size:26px; font-weight:700; color:#5FE8FF;
+  }
+  .stat .cap {
+    font-size:11.5px; letter-spacing:1px; color:#9DC3D2;
+    margin-top:6px; text-transform:uppercase; line-height:1.4;
+  }
+  .stats-note {
+    font-size:12px; color:#7C93A3; margin-top:14px; line-height:1.6;
+  }
+
+  /* section label */
+  section { margin-top:56px; }
+  .sec-label {
+    font-size:13px; letter-spacing:3px; color:#5FE8FF; text-transform:uppercase;
+    margin-bottom:22px;
+  }
+
+  .items { display:flex; flex-direction:column; gap:0; }
+  .item {
+    display:flex;
+    gap:16px;
+    padding:18px 0;
+    border-bottom:1px solid rgba(232,238,242,0.1);
+  }
+  .item:first-child { border-top:1px solid rgba(232,238,242,0.1); }
+  .item .mark { color:#5FE8FF; font-size:17px; flex-shrink:0; padding-top:1px; }
+  .item .txt { font-size:16px; line-height:1.55; color:#E4EDEF; }
+  .item .txt b { color:#F3F7F9; font-weight:600; }
+
+  /* terms */
+  .terms {
+    margin-top:56px;
+    border:1px solid rgba(95,232,255,0.5);
+    padding:22px 22px;
+    font-size:15px;
+    line-height:1.65;
+    color:#E4EDEF;
+  }
+  .terms b { color:#5FE8FF; }
+
+  footer {
+    margin-top:60px;
+    padding-bottom:20px;
+    font-size:12.5px;
+    color:#7C93A3;
+    letter-spacing:0.5px;
+  }
+  footer b { color:#B9CCC0; }
+
+  /* sticky CTA */
+  .sticky {
+    position:fixed;
+    bottom:0; left:0; right:0;
+    background:linear-gradient(180deg, rgba(11,42,74,0) 0%, #0B2A4A 28%);
+    padding:22px 24px 26px;
+    display:flex;
+    justify-content:center;
+    z-index:5;
+  }
+  .cta {
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    width:100%;
+    max-width:472px;
+    font-family:-apple-system, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+    font-size:17px;
+    font-weight:600;
+    letter-spacing:0.3px;
+    color:#05192E;
+    background:#5FE8FF;
+    padding:18px 20px;
+    text-decoration:none;
+    box-shadow:0 14px 34px rgba(95,232,255,0.35);
+  }
+  @media print {
+    html, body {
+      background:#0B2A4A !important;
+      -webkit-print-color-adjust:exact !important;
+      print-color-adjust:exact !important;
+    }
+    .stage-box { background:rgba(11,42,74,0.6) !important; }
+    .cta { background:#5FE8FF !important; color:#05192E !important; }
+    .terms { border-color:rgba(95,232,255,0.5) !important; }
+  }
+</style>
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '2152909715653118');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=2152909715653118&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
+</head>
+<body>
+
+<div class="crop tl"></div>
+<div class="crop tr"></div>
+
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow"><b>Конструктор запусков</b> · Traffared Nexts</div>
+    <h1>Показываю, где именно <span class="hl">теряются деньги</span> в воронке — и сам настраиваю и запускаю рекламу, которая это исправляет</h1>
+
+    <p class="intro">Веду каждый проект сам, от первого разбора до результата.</p>
+
+    <div class="diagram">
+      <div class="stage-box s1">ТРАФИК</div>
+      <div class="stage-box s2">ЛИД</div>
+      <div class="stage-box s3">ОПЛАТА</div>
+      <div class="arrow a1"></div>
+      <div class="arrow a2"></div>
+      <div class="fail"></div>
+    </div>
+    <div class="diagram-cap"><b>ТОЧКА ОТКАЗА</b> — обычно именно здесь и теряются деньги</div>
+  </header>
+
+  <div class="stats">
+    <div class="stat"><div class="num">×4.8</div><div class="cap">рост ROMI<br>в последнем кейсе</div></div>
+    <div class="stat"><div class="num">−63%</div><div class="cap">снижение<br>цены заявки</div></div>
+    <div class="stat"><div class="num">24+</div><div class="cap">воронок<br>запущено</div></div>
+  </div>
+
+  <section>
+    <div class="sec-label">Что входит в работу</div>
+    <div class="items">
+      <div class="item"><div class="mark">→</div><div class="txt"><b>Аудит воронки</b> — нахожу точку отказа: где именно теряются деньги</div></div>
+      <div class="item"><div class="mark">→</div><div class="txt"><b>Настройка кампаний и креативов</b> — под твою нишу и аудиторию</div></div>
+      <div class="item"><div class="mark">→</div><div class="txt"><b>Запуск и ведение рекламы</b> — беру на себя весь процесс</div></div>
+      <div class="item"><div class="mark">→</div><div class="txt"><b>Отчётность по цифрам</b> — ROMI и цена заявки, а не охваты и клики</div></div>
+    </div>
+  </section>
+
+  <div class="terms">
+    Работаю <b>по 100% предоплате</b>. Обсуждаем задачу, договариваемся о стоимости — и я приступаю к работе.
+  </div>
+
+  <footer>
+    <b>Конструктор запусков</b> · Traffared Nexts<br>
+    Астана, Казахстан
+  </footer>
+
+</div>
+
+<div class="sticky">
+  <a class="cta" href="https://wa.me/77066303393" target="_blank" rel="noopener">Написать в WhatsApp →</a>
+</div>
+
+</body>
+</html>
